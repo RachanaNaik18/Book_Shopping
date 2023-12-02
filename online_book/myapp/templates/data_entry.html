@@ -1,0 +1,12 @@
+{% extends "index.html" %}
+{% block title %} Data Entry {% endblock %}
+{% block content %}
+<table class="table">
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{form.as_p}}
+    <br>
+    <input type="submit" value="Submit" class="btn btn-primary"/>
+</form>
+</table>
+{% endblock %}
