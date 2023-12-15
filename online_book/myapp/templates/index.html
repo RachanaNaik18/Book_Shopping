@@ -23,20 +23,22 @@
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="/home">Home</a>
+                <a class="nav-link" aria-current="page" href="/home">Home</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="/data_entry">Data Entry</a>
               </li>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Dropdown
+                  Filter By
                 </a>
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">Action</a></li>
-                  <li><a class="dropdown-item" href="#">Another action</a></li>
+                  <li><a class="dropdown-item" href="#">Category</a></li>
+                  <li><a class="dropdown-item" href="#">Price</a></li>
                   <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="#">Something else here</a></li>
+                  <li><a class="dropdown-item" href="#">Language</a></li>
+                  <li><a class="dropdown-item" href="#">Author</a></li>
+                  <li><a class="dropdown-item" href="#">Name</a></li>
                 </ul>
               </li>
             </ul>
@@ -75,7 +77,7 @@
         <tr>
             <td>{{i.Name}}</td>
             <td><img src="{{i.image.url}}" alt="Not found" width="90"> </td>
-            <td>{{i.Price}}</td>
+            <td>{{i.Price}} &#x20b9</td>
             <td>{{i.Author}}</td>
             <td>{{i.Publisher}}</td>
             <td>{{i.category}}</td>
@@ -93,5 +95,7 @@
         {% endfor %}
     </table>
     {% endblock %}
+
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
 </body>
 </html>

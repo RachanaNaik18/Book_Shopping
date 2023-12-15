@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} Login {% endblock %}</title>
+</head>
+<style>
+    .container{
+        margin-top: 40px;
+        font-family: Arial, Helvetica, sans-serif;
+        width: 50%;
+        position: center;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 30%;
+    }
+    .login_form{
+        border-radius: 5px;
+        padding: 20px;
+        border: 3px solid #f1f1f1;
+    
+    }
+    .login_1{
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+        border-radius: 4px;
+}
+.LOGO{
+  box-shadow: 2px 2px 10px rgb(77, 62, 62);
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 60px;
+  margin-top: 5%;
+}
+.btn{
+    width: 100%;
+    padding: 10px;
+    background-color: aquamarine;
+    border-radius: 10px;
+    border: 0.7px solid rgb(72, 205, 250);
+}
+.btn:hover{
+    background-color: rgb(59, 252, 188);
+}
+.sign{
+    margin-top: 15px;
+    border-top: 2px lightgray;
+    width: 100%;
+}
+.hr_line{
+    width:100%;
+    margin-left:0;
+    border: gray;
+    box-shadow: 2px 2px 2px;
+}
+.sign_btn{
+    width: 100%;
+    border: 2px solid rgb(150, 140, 128); 
+    background-color: rgb(185, 184, 182);
+    padding-top: 3px;
+    padding-bottom: 3px;
+    border-radius: 5px;
+}
+.sign_btn:hover{
+    background-color: rgb(107, 90, 90);
+}
+.sign_btn a{
+    font-family: Arial, Helvetica, sans-serif;
+    text-decoration: none;
+    color: black;
+}
+.line{
+    color: lightgray;
+    text-align: center;
+}
+.table{
+    margin-top: 50px;
+    border: 2px solid rgb(133, 133, 133);
+    margin-left: auto;
+    margin-right: auto;
+    width: 40%;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px lightblue;
+}
+.btn_acc{
+    width: 90%;
+    padding: 7px;
+    background-color: rgb(0, 255, 170);
+    border-radius: 8px;
+    border: 0.7px solid rgb(72, 205, 250); 
+    box-shadow: 2px 2px 5px lawngreen;
+}
+.btn_acc:hover{
+    background-color: rgb(0, 150, 150);
+}
+.th{
+    padding-top: 20px;
+}
+/* @media screen  max-length:500px; {
+    
+} */
+</style>
+<body>
+<nav class="fnavbar">
+    <a class="navbar-brand" href="#"><img src="{% static 'images\logo.png' %}" class="LOGO" alt="..." width="60" height="60"></a>
+</nav>
+    {% block content %}
+    <div class="container">
+<form action="" method="post" class="login_form">
+    {% csrf_token %}
+    Username: <input type="text" name="username" placeholder="Username" class="login_1">
+    <br><br>
+    Password: <input type="password" name="password" placeholder="Password" class="login_1">
+    <br><br>
+    <input type="submit" name="" value="Login" class="btn">
+
+</form>
+<hr><p class="line">New to Bookies?</p><hr> 
+<div class="sign">
+    <button class="sign_btn"><a href="/signup">Create your own account</a></button>
+</div>
+</div>
+    {% endblock %}
+</body>
+</html>

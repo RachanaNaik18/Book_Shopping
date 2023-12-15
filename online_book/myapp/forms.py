@@ -1,10 +1,13 @@
 from django import forms
 from django.utils.safestring import mark_safe
 from .models import book
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 
-class HorizontalRadioRenderer(forms.RadioSelect):
-     def render(self):
-          return mark_safe(u'\n'.join([u'%s\n' %w for w in self]))
+
+# class HorizontalRadioRenderer(forms.RadioSelect):
+#      def render(self):
+#           return mark_safe(u'\n'.join([u'%s\n' %w for w in self]))
      
 class book_form(forms.ModelForm):
      
@@ -24,3 +27,8 @@ class book_form(forms.ModelForm):
      class Meta:
           model = book
           fields = '__all__'
+
+class Signup_form(UserCreationForm):
+     class Meta:
+          model = User
+          fields = ['username', 'first_name', 'last_name', 'email']

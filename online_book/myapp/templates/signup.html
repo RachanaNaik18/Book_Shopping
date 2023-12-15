@@ -1,0 +1,37 @@
+{% extends 'login.html' %}
+{% block title %} Signup {% endblock %}
+{% block content %}
+{% for field in form %}
+    {% if field.errors %}
+        <div role="alert">
+            {% for error in field.errors %}
+                {{ error|striptags }}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endfor %}
+<table class="table">
+    
+<form action="" method="post">
+    {% csrf_token %}
+    <tr><th><h1>Signup</h1></th></tr>
+    <tr>
+    {% for fm in form %}
+         {{fm.label_tags}}
+
+        <th class="th">{{fm.label}}</th> 
+        <th  class="th"> {{fm}}</th>
+    </tr>    
+        {{fm.error | striptags}}
+    {% endfor %}
+
+   <tr><th  class="th" colspan="2"><input type="submit" value="Create my account" class="btn_acc"/></th> </tr>
+
+   <tr><th  class="th" colspan="2"><p>Already have an account? Go back to <a href="/login/">Login page</a></p></th> </tr>
+
+</form>
+
+
+</table>
+
+{% endblock %}
