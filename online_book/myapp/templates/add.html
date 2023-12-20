@@ -1,12 +1,139 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}">
+    <title>{% block title %} Address {% endblock %}</title>
+    <style>
+        .row{
+            margin: auto;
+            padding: 10px;
+        }
+        #hide1{
+            display: none;
+        }
+        #view_ord{
+            display: block;
+        }
+    </style>
 </head>
 <body>
-    <form action="" method="post">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#"><img src="{% static 'images\logo.png' %}" class="img-thumbnail rounded-circle" alt="..." width="60" height="60"></a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+      </nav>
+    {% block content %}
+<div class="row">
+<div class="col-lg-10">
+<div class="row border mt-4 "><th><h3>View Order</h3> </th>
+<div class="container" id="view_ord">
+<div class="row">
+
+    {% for i in data %}
+    <div class="col-lg-3 col-md-6 col-sm-12 card shadow ms-5 mt-4" style="width: 15rem;">
+        <img src="{{i.image.url}}" alt="" class="card-img-top mt-2 px-5" height="150">
+        <div class="card-body">
+          <h5 class="card-title">{{i.Name}}</h5>
+          <h6>Author: {{i.Author}}</h6>
+          <h6>Price: {{i.Price}} &#x20b9</h6>
+          <h6>Language: {{i.Language}}</h6>
+        </div>
+    </div>
+    {% endfor %}
+    <div class="col-10" ><button class="btn btn-warning mt-5" onclick="next_add()" >Next</button></div>
+    
+</div>
+</div>
+</div>
+<div class="row border mt-4" ><th><h3>Address</h3> </th>
+    <div class="container" id="hide1">
+        <div class="col-10" ><button class="btn btn-warning" onclick="go_ord()" >Go Back</button></div>
+    {% if user_add %}
+
+    {% for i in user_add %}
+    <div class="card mb-3" style="width: 18rem;">
+        <input type="radio" style="float: left; clear: both;">
+        <div class="card-body">
+          <h5 class="card-title">{{i.street}}</h5>
+          <h5 class="card-title">{{i.City}}</h5>
+          <h5 class="card-title">{{i.Pincode}}</h5>
+          <h5 class="card-title">{{i.State}}</h5>
+          <form action="" method="post">
+            {% csrf_token %}
+            {% for i in data %}
+            <input type="number" value="{{i.id}}"  name="product_id" id="">
+            {% endfor %}
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <table class="table">
+        <form action="" method="post">
+        <tr>
+            <th>Locality/Street: </th>
+            <th><input type="text"  name="street" id=""></th>
+        </tr>
+        <tr>
+            <th>City:</th>
+            <th><input type="text"  name="city" id=""></th>
+        </tr>
+        <tr>
+            <th>Pincode: </th>
+            <th><input type="number"  name="pincode" id=""></th>
+        </tr>
+        <tr>
+            <th>State:</th>
+            <th><input type="text"  name="state" id=""></th>
+        </tr>
+        <tr><th colspan="2">
+            {% csrf_token %}
+            {% for i in data %}
+            <input type="number" value="{{i.id}}"  name="product_id" id="">
+            {% endfor %}
+            <input type="submit" value="Submit" class="btn btn-success">
+        </th></tr>
     </form>
+    </table>
+    {% endif %}
+</div>
+</div>
+<div class="row border mt-4"><th>Payment</th>
+
+</div>
+</div>
+
+<div class="col-lg-2 border-start mt-4">
+    <button class="btn btn-warning"><a class="nav-link" aria-current="page" href="/cart">Go Back to Cart</a></button>
+    <h4>Order Summery</h4>
+</div>
+</div>
+</div>
+    {% endblock %}
+    <script>
+        // function show(){
+        //    let a = document.getElementById('hide1')
+        //     a.style.display = "block"
+        // }
+        function next_add(){
+            let a = document.getElementById("view_ord")
+            a.style.display = "none"
+            let b = document.getElementById('hide1')
+            b.style.display = "block"
+        }
+        function go_ord(){
+            let a = document.getElementById("view_ord")
+            a.style.display = "block"
+            let b = document.getElementById('hide1')
+            b.style.display = "none"
+        }
+
+    </script>
 </body>
+
 </html>

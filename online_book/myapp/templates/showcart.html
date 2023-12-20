@@ -1,16 +1,24 @@
 {% extends "cart.html" %}
 {% block title %} Your cart {% endblock %}
 {% block content %}
-<div class="col-lg-12 mt-4" style="--bs-bg-opacity: .5;">
+<div class="row">
+<div class="col-lg-9 mt-4 branch" style="--bs-bg-opacity: .5;">
     <div class="row">
       {% if data %}
       {% for i in data %}
-      <div class="col-lg-3 col-md-6 col-sm-12 card shadow ms-5" style="width: 15rem;">
+      
+      <div class="col-lg-3 col-md-6 col-sm-12 card shadow ms-5 mt-4" style="width: 15rem;">
+        <form action="" method="get"></form>
           <img src="{{i.image.url}}" alt="" class="card-img-top mt-2 px-5" height="150">
           <div class="card-body">
             <h5 class="card-title">{{i.Name}}</h5>
-            <p class="card-text">up the bulk of the card's content.</p>
+            <h6>Author: {{i.Author}}</h6>
+            <h6>Price: {{i.Price}} &#x20b9</h6>
+            <h6>Language: {{i.Language}}</h6>
+            <input type="number" value={{i.id}} />
           </div>
+          
+        
           <div class="row">
           <div class="col-6">
             {% for j in quantity %}
@@ -33,7 +41,7 @@
           </div>
           </div>
           <div><form action="{% url 'remove_cart' i.id %}" method="get">
-            <input type="submit" value="Remove" />
+            <input type="submit" value="Remove" class="btn btn-danger"/>
           </form>
         </div>
             </div>
@@ -45,4 +53,15 @@
     </div>
   </div>
 
+<div class="col-lg-3 mt-4 branch border-start">
+<h3>
+  Cart subtotal: {{add_amt}}
+</h3>
+<form action="{% url 'cart_order' %}" method="get">
+ 
+  <input type="submit" value="Proceed to Buy items ({{total_items}})" class="btn btn-warning">
+</form>
+</div>
+</div>
+</form>
 {% endblock %}

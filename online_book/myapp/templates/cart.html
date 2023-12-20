@@ -11,9 +11,12 @@
   .hide{
     display: none;
   }
+body{
+  background-color: rgb(215, 252, 255);
+}
 </style>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light bg-gradient shadow" style="--bs-bg-opacity: .5;">
         <div class="container-fluid">
           <a class="navbar-brand" href="#"><img src="{% static 'images\logo.png' %}" class="img-thumbnail rounded-circle" alt="..." width="60" height="60"></a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,16 +69,15 @@
               <div class="col-6">
               <form action="{% url 'addtocart' %}" method="get">
                 <input type="number" value={{i.id}} name="cid" class="hide">
-                <br>
                 <input type="submit" value="Add to cart" class="btn btn-primary">
             </form>
           </div>
             <div class="col-6">
-              <form action="{}" method="post">
+              <form action="{% url 'orderplace' %}" method="post">
                 {% csrf_token %}
-                <input type="number" value="{{i.id}}" name="pid">
+                <input type="number" value="{{i.id}}" name="pid" class="hide">
                 {% for i in add_id %}
-                <input type="number" value="{{i.id}}" name="aid">
+                <input type="number" value="{{i.id}}" name="aid" class="">
                 {% endfor %}
                 <input type="submit" value="Buy Now" class="btn btn-warning">
               </form>

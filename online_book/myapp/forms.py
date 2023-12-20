@@ -21,7 +21,7 @@ class book_form(forms.ModelForm):
                                   initial=0,
                                     widget=forms.RadioSelect)
 
-     gen = (('Adventure', 'Adventure'), ('Romance', 'Romance'), ('Comedy','Comedy'), ('Action', 'Action'), ('Horror', 'Horror'), ('Psycology', 'Psycology'), ('Spiritual','Spiritual'),('Mythological Friction', 'Mythological Friction'))
+     gen = (('Adventure', 'Adventure'), ('Romance', 'Romance'), ('Comedy','Comedy'), ('Action', 'Action'), ('Horror', 'Horror'), ('Psycology', 'Psycology'), ('Spiritual','Spiritual'),('Mythological Friction', 'Mythological Friction'), ('Education', 'Education'), ('Fauna & Flora', 'Fauna & Flora'), ('Biology', 'Biology'))
      Genra = forms.ChoiceField(choices=gen, widget=forms.Select)
 
      class Meta:

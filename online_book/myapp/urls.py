@@ -15,4 +15,7 @@ urlpatterns = [
     path('login/', views.Login, name='login'),
     path('logout/', views.LogOut, name='logout'),
     path('signup/', views.Signup, name="signup"),
+    path('orderplace/', views.Order_place, name='orderplace'),
+    path('address/', views.address_user, name='address'),
+    path('cart_order/',views.Order_place1,name='cart_order')
 ]
