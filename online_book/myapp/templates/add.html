@@ -17,6 +17,12 @@
         #view_ord{
             display: block;
         }
+        #rzp-button1{
+            display: none
+        }
+        .dddd{
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -66,12 +72,13 @@
           <form action="" method="post">
             {% csrf_token %}
             {% for i in data %}
-            <input type="number" value="{{i.id}}"  name="product_id" id="">
+            <input type="number" value="{{i.id}}"  name="product_id" class="dddd">
             {% endfor %}
             </form>
         </div>
     </div>
     {% endfor %}
+    <div class="col-10" ><button class="btn btn-warning mt-5" id="pay_next" onclick="go_pay()">Next</button></div>
     {% else %}
     <table class="table">
         <form action="" method="post">
@@ -94,7 +101,7 @@
         <tr><th colspan="2">
             {% csrf_token %}
             {% for i in data %}
-            <input type="number" value="{{i.id}}"  name="product_id" id="">
+            <input type="number" value="{{i.id}}"  name="product_id" id="dddd">
             {% endfor %}
             <input type="submit" value="Submit" class="btn btn-success">
         </th></tr>
@@ -104,22 +111,60 @@
 </div>
 </div>
 <div class="row border mt-4"><th>Payment</th>
-
+    <div class="mt-2">
+        <button id="rzp-button1" class="btn btn-warning">Pay with Razorpay</button>
+    </div>
 </div>
 </div>
-
 <div class="col-lg-2 border-start mt-4">
-    <button class="btn btn-warning"><a class="nav-link" aria-current="page" href="/cart">Go Back to Cart</a></button>
-    <h4>Order Summery</h4>
-</div>
+<button class="btn btn-warning"><a class="nav-link" aria-current="page" href="/cart">Go Back to Cart</a></button>
+<h4>Order Summery</h4>
 </div>
 </div>
     {% endblock %}
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
-        // function show(){
-        //    let a = document.getElementById('hide1')
-        //     a.style.display = "block"
-        // }
+        var options = {
+    "key": "rzp_test_r1SMDlPAi7bpbD", // Enter the Key ID generated from the Dashboard
+    "amount": "50000", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "Acme Corp",
+    "description": "Test Transaction",
+    "image": "https://example.com/your_logo",
+    "order_id": "", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "handler": function (response){
+        alert(response.razorpay_payment_id);
+        alert(response.razorpay_order_id);
+        alert(response.razorpay_signature)
+    },
+    "prefill": {
+        "name": "Gaurav Kumar",
+        "email": "gaurav.kumar@example.com",
+        "contact": "9000090000"
+    },
+    "notes": {
+        "address": "Razorpay Corporate Office"
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+var rzp1 = new Razorpay(options);
+rzp1.on('payment.failed', function (response){
+        alert(response.error.code);
+        alert(response.error.description);
+        alert(response.error.source);
+        alert(response.error.step);
+        alert(response.error.reason);
+        alert(response.error.metadata.order_id);
+        alert(response.error.metadata.payment_id);
+});
+document.getElementById('rzp-button1').onclick = function(e){
+    rzp1.open();
+    e.preventDefault();
+}
+
+
         function next_add(){
             let a = document.getElementById("view_ord")
             a.style.display = "none"
@@ -132,8 +177,13 @@
             let b = document.getElementById('hide1')
             b.style.display = "none"
         }
+        function go_pay(){
+            let p = document.getElementById("rzp-button1")
+            p.style.display="block"
+            let a = document.getElementById("hide1")
+            a.style.display = "none"
+        }
 
     </script>
 </body>
-
 </html>

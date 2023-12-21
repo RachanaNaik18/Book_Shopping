@@ -4,6 +4,7 @@ from .forms import book_form, Signup_form
 from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth import authenticate, login, logout
+from razorpay import Client
 
 
 def find(request):
@@ -164,34 +165,37 @@ def Order_place(request):
     if request.user.is_authenticated:
         if request.method == "POST":
             product_id = request.POST.get('pid')
-            cart_id = Cart.objects.filter(user=request.user).values_list('id', flat=True)
-            print(cart_id)
-            Order.objects.create(user = request.user, Buy_direct_id=product_id, Buy_cart_id = cart_id)
+            Order.objects.create(user = request.user, Buy_direct_id=product_id)
             return HttpResponseRedirect('/address/')
         
 def Order_place1(request):
     if request.user.is_authenticated:
         if request.method == "GET":
             cart_id = Cart.objects.filter(user=request.user).values_list('website_id', flat=True)
-            cart_id1 = Cart.objects.filter(user=request.user).values_list('id', flat=True)
-
+            # cart_id1 = Cart.objects.filter(user=request.user).values_list('id', flat=True)
+   
             p_id = book.objects.filter(id__in=cart_id).values_list('id',flat=True)
             for i in p_id:
-                print(i)
                 Order.objects.create(user = request.user, Buy_direct_id = i)
             return HttpResponseRedirect('/address/')
     
-
 def address_user(request):
+
     if request.user.is_authenticated:
+
+        client = Client(auth=('rzp_test_r1SMDlPAi7bpbD','WIaNqW59qPAI8Em361bFxCVh'))
+        amount=500
+        data = { "amount": amount, "currency": "INR", "receipt": "order_rcptid_11" }
+        client.order.create(data=data)
+
+        # context = {}
+        # context['amount'] = data['amount']
+        # context['crn'] = data['currency']
+        # context['email'] =  "rachananaik13@gmail.com"
+
+
         order = Order.objects.filter(user=request.user).values_list('Buy_direct_id', flat=True)
-        order_c = Order.objects.filter(user=request.user).values_list('Buy_cart_id', flat=True)
-        print(order_c)
-
-        data = book.objects.filter(id__in=order) | book.objects.filter(id__in=order_c)
-
-        print(data)
-        name = User.objects.filter(id__in=order)
+        data = book.objects.filter(id__in=order) 
         if request.method == "POST":
             street=request.POST.get('street')
             city = request.POST.get('city')
@@ -203,3 +207,4 @@ def address_user(request):
         return render(request, 'add.html', {'user_add':os, 'data':data})
     else:
         return HttpResponseRedirect('/login/')
+    

@@ -35,6 +35,7 @@ class Order(models.Model):
     Buy_cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=True)
     order_id = models.CharField(max_length = 100, null=True, unique=True)
     date = models.DateField(auto_now_add=True, null=True)
+    quantity = models.PositiveIntegerField(default=1, null=True)
     address = models.ForeignKey(Address, on_delete=models.CASCADE, null=True)
     
     def save(self, *args, **kwargs):
@@ -44,7 +45,7 @@ class Order(models.Model):
             self.order_id = order_id
         super().save(*args, **kwargs)
 
-# class Delivered(models.Model):
-#     book_order = models.ForeignKey(Order, on_delete= models.CASCADE, null=True)
-#     book_Cart = models.ForeignKey(Cart, on_delete= models.CASCADE, null=True )
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+class Delivered(models.Model):
+    book_order = models.ForeignKey(Order, on_delete= models.CASCADE, null=True)
+    book_Cart = models.ForeignKey(book, on_delete= models.CASCADE, null=True )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
