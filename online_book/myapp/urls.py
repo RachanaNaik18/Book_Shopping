@@ -17,5 +17,6 @@ urlpatterns = [
     path('signup/', views.Signup, name="signup"),
     path('orderplace/', views.Order_place, name='orderplace'),
     path('address/', views.address_user, name='address'),
-    path('cart_order/',views.Order_place1,name='cart_order')
+    path('cart_order/',views.Order_place1,name='cart_order'),
+    path('success/',views.Delivary,name='success'),
 ]

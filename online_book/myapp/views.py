@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponseRedirect
-from .models import book,Cart,Address,Order, User
+from .models import book,Cart,Address,Order, Delivered
 from .forms import book_form, Signup_form
 from django.contrib import messages
 from django.db.models import Q
@@ -123,8 +123,7 @@ def cart_decrease(request):
     if request.user.is_authenticated:
         if request.method == "GET":
             cid = request.GET.get('cid')
-            items,store = Cart.objects.get_or_create(website_id = cid,user=request.user)
-            
+            items,store = Cart.objects.get_or_create(website_id = cid,user=request.user)     
 
             if not store:
                 items.quantity -= 1
@@ -172,11 +171,13 @@ def Order_place1(request):
     if request.user.is_authenticated:
         if request.method == "GET":
             cart_id = Cart.objects.filter(user=request.user).values_list('website_id', flat=True)
-            # cart_id1 = Cart.objects.filter(user=request.user).values_list('id', flat=True)
+            cart_id1 = Cart.objects.filter(user=request.user).values_list('id', flat=True)
+            quantity = Cart.objects.filter(user=request.user).values_list('quantity', flat=True)
    
             p_id = book.objects.filter(id__in=cart_id).values_list('id',flat=True)
-            for i in p_id:
-                Order.objects.create(user = request.user, Buy_direct_id = i)
+            for i in range(0, len(p_id)):
+                # print(cart_id1[i], p_id[i])
+                Order.objects.create(user = request.user, Buy_direct_id = p_id[i], Buy_cart_id = cart_id1[i], quantity = quantity[i])  
             return HttpResponseRedirect('/address/')
     
 def address_user(request):
@@ -188,14 +189,11 @@ def address_user(request):
         data = { "amount": amount, "currency": "INR", "receipt": "order_rcptid_11" }
         client.order.create(data=data)
 
-        # context = {}
-        # context['amount'] = data['amount']
-        # context['crn'] = data['currency']
-        # context['email'] =  "rachananaik13@gmail.com"
-
+        quantity = Cart.objects.filter(user=request.user)
 
         order = Order.objects.filter(user=request.user).values_list('Buy_direct_id', flat=True)
-        data = book.objects.filter(id__in=order) 
+        data1 = book.objects.filter(id__in=order) 
+
         if request.method == "POST":
             street=request.POST.get('street')
             city = request.POST.get('city')
@@ -204,7 +202,20 @@ def address_user(request):
             product_id = request.POST.get('pid')
             Address.objects.create(street=street,City=city, Pincode=pincode, State = state, user=request.user, product_id=product_id)
         os = Address.objects.filter(user_id = request.user)    
-        return render(request, 'add.html', {'user_add':os, 'data':data})
+        return render(request, 'add.html', {'user_add':os, 'data':data1, 'quantity':quantity})
     else:
         return HttpResponseRedirect('/login/')
-    
+
+def Delivary(request):
+    if request.user.is_authenticated:
+        if request.method == "GET":
+            order = Order.objects.filter(user=request.user).values_list('Buy_direct_id', flat=True)
+            data = book.objects.filter(id__in=order).values_list('id', flat=True)
+            ord_no = Order.objects.filter(user=request.user).values_list('order_id', flat=True)
+            for i in range(0, len(data)):
+                Delivered.objects.create(book_Cart_id=data[i] ,user=request.user, order_id_no=ord_no[i])
+                # pi = Order.objects.get('')
+            
+        return HttpResponseRedirect('/cart/')
+
+

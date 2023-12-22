@@ -46,6 +46,6 @@ class Order(models.Model):
         super().save(*args, **kwargs)
 
 class Delivered(models.Model):
-    book_order = models.ForeignKey(Order, on_delete= models.CASCADE, null=True)
     book_Cart = models.ForeignKey(book, on_delete= models.CASCADE, null=True )
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    order_id_no = models.CharField(max_length = 100, null=True, unique=True)
