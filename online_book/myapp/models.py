@@ -49,3 +49,8 @@ class Delivered(models.Model):
     book_Cart = models.ForeignKey(book, on_delete= models.CASCADE, null=True )
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     order_id_no = models.CharField(max_length = 100, null=True, unique=True)
+    date_ord = models.DateField(auto_now_add=True, null=True)
+    date = models.DateField(null=True)
+    quantity = models.PositiveIntegerField(null=True)
+
+

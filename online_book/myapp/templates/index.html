@@ -53,6 +53,7 @@
 
 
     {% block content %}
+    
     <div class="msg" id="hidediv" style="display: inline;">
       {% if messages %}
       {% for messages in messages %}
@@ -96,6 +97,6 @@
     </table>
     {% endblock %}
 
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>

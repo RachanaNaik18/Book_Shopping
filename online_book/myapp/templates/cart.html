@@ -4,19 +4,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}">
+    
     <title>{% block title %} Cart {% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}">
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 </head>
 <style>
+  a{
+    text-decoration: none;
+  }
   .hide{
     display: none;
   }
 body{
   background-color: rgb(215, 252, 255);
 }
+.ord_item{
+  background-color: red; 
+  color: white; 
+  border-radius: 100%; 
+  width:17px;
+  height: 17px;
+  text-align: center;
+  margin: 2px;
+}
+.img_slide{
+  text-align: center;
+  overflow: auto;
+  height: 20%;
+}
+.img_slide img{
+  display: inline-block;
+  margin: 0 10px;
+}
+.img_cont{
+  position: relative;
+  max-width: 100%;
+  background-color: rgb(15, 15, 15);
+} 
+.prev, .next{
+  cursor: pointer;
+  position: absolute;
+  top: 30%;
+  width: auto;
+  padding: 16px;
+  margin-top: -22px;
+  color: aliceblue;
+  font-size: 18px;
+  transition: 0.6s ease;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+}
+.next{
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+.cp{
+  text-align: center;
+  font-size: 50px;
+  font-family: cursive;
+}
+.prev:hover, .next:hover{
+  background-color: rgba(0, 0, 0, 0.8g);
+}
+.fad{
+  animation-name: fad;
+  animation-duration: 2.5s;
+}
+@keyframes fad{
+  from {opacity: 0.4;}
+  to  {opacity: 1;}
+}
+@media screen and (max-width:700px) {
+  .cp{
+    font-size: 30px;
+  }
+  .img_slide{
+  text-align: center;
+  overflow: auto;
+  height: 300px;
+}
+.img_slide img{
+  display: inline;
+  margin: 0 10px;
+}
+
+}
 </style>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light bg-gradient shadow" style="--bs-bg-opacity: .5;">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow" style="--bs-bg-opacity: .5;">
         <div class="container-fluid">
           <a class="navbar-brand" href="#"><img src="{% static 'images\logo.png' %}" class="img-thumbnail rounded-circle" alt="..." width="60" height="60"></a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,21 +104,28 @@ body{
                 <a class="nav-link" aria-current="page" href="/cart">Home</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/viewcart">Orders <sup>{{cartcount}}</sup></a>
+                <a class="nav-link" href="/viewcart" style="width: 92px; display: flex; flex-direction:row;">Orders <div class="ord_item"><sup>{{cartcount}}</sup></div></a>
               </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <!-- <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   Sort
                 </a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <li><a class="dropdown-item" href="#">Action</a></li>
-                  <li><a class="dropdown-item" href="#">Another action</a></li>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#"></a></li>
+                  <li><a class="dropdown-item" href="#" type="submit" name="Novel">Novel</a></li>
                   <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="#">Something else here</a></li>
+                  <li><a class="dropdown-item" href="#" type="submit" name="Journal">Journal</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="#" type="submit" name="Comics">Comics</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="#" type="submit" name="price">Price</a></li>
                 </ul>
-              </li>
+              </li> -->
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'logout' %}">Logout/<span>{{uname}}</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/del_pla">My Orders</a>
               </li>
             </ul>
             <form class="d-flex" role="search" method="post">
@@ -54,8 +137,39 @@ body{
           </div>
         </div>
       </nav>
+
     {% block content %}
-    <div class="col-lg-12 mt-4" style="--bs-bg-opacity: .5;">
+    <a href="#main">
+    <div class="img_cont carousel slide" href="">
+    
+<div class="show col-12 fad">
+  <div class="img_slide">
+{% for i in c_img %}
+<img src="{{i.image.url}}" width="100%" style="max-width: 300px;" class="card-img-top mt-2 px-5 col-lg-3">
+{% endfor %}
+</div>
+<div class="cp" style="color: white;"> View our Latest Comics</div>
+</div>
+<div class="show col-12 fad">
+  <div class="img_slide">
+  {% for i in j_img %}
+      <img src="{{i.image.url}}" width="100%" style="max-width: 300px;" class="card-img-top mt-2 px-5">
+      {% endfor %}
+    </div>
+    <div class="cp" style="color: white;"> <b>View our Latest Journals</b></div>
+  </div>
+  <div class="show col-12 fad">
+    <div class="img_slide">
+    {% for i in n_img %}
+    <img src="{{i.image.url}}" width="100%" style="max-width: 300px;" class="card-img-top mt-2 px-5">
+    {% endfor %}
+  </div>
+  <div class="cp" style="color: white;"> <b>View our Latest Novels</b></div>
+    </div>
+</div>
+</a>
+
+    <div class="col-lg-12 mt-4" style="--bs-bg-opacity: .5;" id="main">
       <div class="row">
         {% for i in data %}
         <div class="col-lg-3 col-md-6 col-sm-12 card shadow mt-2 ms-5" style="width: 18rem;">
@@ -90,6 +204,22 @@ body{
     </div>
 
     {% endblock %}
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    
+    <script>
+      let slideno = 1;
+      showSlides(slideno);
+
+      function showSlides(){
+        let i;
+        let slide = document.getElementsByClassName("show");
+        for (i=0; i<slide.length; i++){
+          slide[i].style.display="none"
+        }
+        slideno++;
+        if (slideno>slide.length){slideno = 1}
+        slide[slideno-1].style.display = "block";
+        setTimeout(showSlides, 3000)
+      }
+    </script>
 </body>
 </html>

@@ -19,4 +19,9 @@ urlpatterns = [
     path('address/', views.address_user, name='address'),
     path('cart_order/',views.Order_place1,name='cart_order'),
     path('success/',views.Delivary,name='success'),
+    path('cart_del/', views.cart_del, name='cart_del'),
+    path('g_back/', views.go_back, name='g_back'),
+    path('r_add/', views.remove_add, name='remove_add'),
+    path('del_pla/', views.Delivary_placed, name='del_pla'),
+    path('confirm/',views.confirm,name='confirm')
 ]

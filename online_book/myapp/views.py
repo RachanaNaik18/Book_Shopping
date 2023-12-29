@@ -5,6 +5,8 @@ from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth import authenticate, login, logout
 from razorpay import Client
+import datetime
+
 
 
 def find(request):
@@ -12,7 +14,7 @@ def find(request):
         search = request.POST.get('search')
         all = book.objects.all()
         os = book.objects.filter(Q(Name__icontains = search) | Q(Author__icontains=search) | Q(Publisher__icontains=search) | Q(category__icontains=search))
-        print(os)
+        
 
     else:
         os = book.objects.all()
@@ -56,14 +58,18 @@ def Cart_search(request):
         cart1 = Cart.objects.filter(user=request.user)
         count = cart1.count()
         uname = request.user
-        b = Address.objects.all().values_list('id', flat=True)
-        print(count)
+
+        j_img = book.objects.filter(category__iexact="Journal").order_by('-id')[:3]
+        n_img = book.objects.filter(category__iexact="Novel").order_by('-id')[:3]
+        c_img = book.objects.filter(category__iexact="Comics").order_by('-id')[:3]
+
         if request.method == "POST":
             search = request.POST.get('search')
             a = book.objects.filter(Q(Name__icontains = search) | Q(Author__icontains=search) | Q(Publisher__icontains=search) | Q(category__icontains=search))
+     
         else:
             a = book.objects.all()
-        return render(request, 'cart.html', {'data':a, 'cartcount':count, 'uname':uname})
+        return render(request, 'cart.html', {'data':a, 'cartcount':count, 'uname':uname, 'j_img':j_img, 'n_img':n_img, 'c_img':c_img})
     else:
         return HttpResponseRedirect('/login/')
 
@@ -85,6 +91,9 @@ def view_cart(request):
         qua= Cart.objects.filter(user=request.user)
         uname = request.user
 
+        cart2 = Cart.objects.filter(user=request.user)
+        count = cart2.count()
+
         amount = book.objects.filter(id__in = user_cart).values_list('Price', flat=True)
         number_books = Cart.objects.filter(user=request.user).values_list('quantity', flat = True)
         mul_amt_book = []
@@ -97,13 +106,14 @@ def view_cart(request):
         total = 0
         for i in range(0, len(a)):
             total = total + a[i]
-        return render(request, 'showcart.html', {'data':cart1,'quantity':qua, 'uname':uname, 'total_items':total, 'add_amt': add_amount})
+        return render(request, 'showcart.html', {'data':cart1,'quantity':qua, 'uname':uname, 'total_items':total, 'add_amt': add_amount, 'cartcount':count})
     else:
         return HttpResponseRedirect('/login/')
     
 def Remove_cart(request, id):
     if request.method == "GET":
         os = Cart.objects.filter(website_id = id)
+        print(os)
         os.delete()
         return HttpResponseRedirect('/viewcart/')
     
@@ -181,19 +191,31 @@ def Order_place1(request):
             return HttpResponseRedirect('/address/')
     
 def address_user(request):
-
     if request.user.is_authenticated:
 
         client = Client(auth=('rzp_test_r1SMDlPAi7bpbD','WIaNqW59qPAI8Em361bFxCVh'))
         amount=500
         data = { "amount": amount, "currency": "INR", "receipt": "order_rcptid_11" }
         client.order.create(data=data)
-
+        
         quantity = Cart.objects.filter(user=request.user)
 
         order = Order.objects.filter(user=request.user).values_list('Buy_direct_id', flat=True)
         data1 = book.objects.filter(id__in=order) 
 
+        user_ord = Order.objects.filter(user=request.user).values_list('Buy_direct_id', flat = True)
+        amount = book.objects.filter(id__in = user_ord).values_list('Price', flat=True)
+        number_books = Order.objects.filter(user=request.user).values_list('quantity', flat = True)
+        mul_amt_book = []
+        for i in range (0, len(amount)):
+            mul_amt_book.append(amount[i]*number_books[i])
+        add_amount = sum(mul_amt_book)
+        a = Order.objects.filter(user=request.user).values_list('quantity', flat=True)
+        total = 0
+        for i in range(0, len(a)):
+            total = total + a[i]
+        print(total)
+        
         if request.method == "POST":
             street=request.POST.get('street')
             city = request.POST.get('city')
@@ -201,10 +223,26 @@ def address_user(request):
             state = request.POST.get('state')
             product_id = request.POST.get('pid')
             Address.objects.create(street=street,City=city, Pincode=pincode, State = state, user=request.user, product_id=product_id)
+
         os = Address.objects.filter(user_id = request.user)    
-        return render(request, 'add.html', {'user_add':os, 'data':data1, 'quantity':quantity})
+        return render(request, 'add.html', {'user_add':os, 'data':data1, 'quantity':quantity, 'q':total, 't_amt':add_amount})
     else:
         return HttpResponseRedirect('/login/')
+
+def go_back(request):
+    if request.user.is_authenticated:
+        if request.method == "GET":
+            g_cart = Order.objects.all()
+            g_cart.delete()
+            return HttpResponseRedirect('/cart/')
+
+def remove_add(request):
+    if request.user.is_authenticated:
+        if request.method == "GET":
+            ct = request.GET.get('add_id')
+            os = Address.objects.filter(id__in = ct)
+            os.delete()
+            return HttpResponseRedirect('/address/')
 
 def Delivary(request):
     if request.user.is_authenticated:
@@ -212,10 +250,48 @@ def Delivary(request):
             order = Order.objects.filter(user=request.user).values_list('Buy_direct_id', flat=True)
             data = book.objects.filter(id__in=order).values_list('id', flat=True)
             ord_no = Order.objects.filter(user=request.user).values_list('order_id', flat=True)
-            for i in range(0, len(data)):
-                Delivered.objects.create(book_Cart_id=data[i] ,user=request.user, order_id_no=ord_no[i])
-                # pi = Order.objects.get('')
+            qu = Cart.objects.filter(user=request.user).values_list('quantity', flat=True)
+            c = Order.objects.filter(user=request.user).values_list('id', flat=True)
+
             
-        return HttpResponseRedirect('/cart/')
+            
+            for i in range(0, len(data)):
+                d = datetime.datetime.now() + datetime.timedelta(days=5)
+                Delivered.objects.create(book_Cart_id=data[i] ,user=request.user, order_id_no=ord_no[i], quantity= qu[i], date=d)
+                
+                if ord_no[i] in ord_no:
+                    pi = Order.objects.filter(id__in = c)
+                    pi.delete()
+        return HttpResponseRedirect('/del_pla/')
+    
+def cart_del(request):
+    if request.user.is_authenticated:
+        if request.method == "GET":
+            c_t = Order.objects.filter(user=request.user).values_list('Buy_cart_id', flat=True)
+            cart = Cart.objects.filter(id__in=c_t)
+            cart.delete()
+        return HttpResponseRedirect('/address/')
 
+def Delivary_placed(request):
+    if request.user.is_authenticated:
+        d= Delivered.objects.filter(user=request.user).values_list('book_Cart_id', flat=True)
+        data=book.objects.filter(id__in=d)
+        
+        k = Delivered.objects.filter(user=request.user)
 
+        uname = request.user
+
+        cart1 = Cart.objects.filter(user=request.user)
+        count = cart1.count()
+
+        amount = book.objects.filter(id__in = d).values_list('Price', flat=True)
+        num_books = Delivered.objects.filter(user=request.user).values_list('quantity', flat = True)
+        
+        mul_amt_book = []
+        for i in range (0, len(amount)):
+            mul_amt_book.append(amount[i]*num_books[i])
+        
+        return render(request, "delivered.html", {'data':data, 'deli':k, 'uname':uname, 'amt':mul_amt_book, 'cartcount':count})
+
+def confirm(request):
+    return render(request,'confirm.html')

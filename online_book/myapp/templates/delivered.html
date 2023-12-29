@@ -1,0 +1,31 @@
+{% extends "cart.html" %}
+{% block title %}Delivery{% endblock %}
+{% block content %}
+
+<div class="container">
+<div class="row">
+    {% for j in deli %}
+    {% for i in data %}
+    {% if i.id == j.book_Cart_id %}
+<div class="col-lg-3 col-md-6 col-sm-12 card shadow ms-5 mt-4" style="width: 15rem;">
+      <img src="{{i.image.url}}" alt="" class="card-img-top mt-2 px-5" height="150">
+      <div class="card-body">
+        <h5 class="card-title">{{i.Name}}</h5>
+        <h6>Author: {{i.Author}}</h6>
+        <h6>Price: {{i.Price}} &#x20b9</h6>
+        <h6>Language: {{i.Language}}</h6>
+        <h6>Quantity: {{j.quantity}}</h6>
+        
+        <!-- <h6>Total amount: {{i.Price}}*{{j.quantity}}</h6> -->
+        
+        <p>Order Date: {{j.date_ord}}</p>
+        <p>Delivery Date: {{j.date}}</p>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
+    {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

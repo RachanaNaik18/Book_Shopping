@@ -23,6 +23,12 @@
         .dddd{
             display: none;
         }
+        #none{
+            display: none;
+        }
+        #pay{
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -34,9 +40,9 @@
           </button>
       </nav>
     {% block content %}
-<div class="row">
+<div class="row" id="pay">
 <div class="col-lg-10">
-<div class="row border mt-4 "><th><h3>View Order</h3> </th>
+<div class="row border mt-4 done "><th><h3>View Order</h3> </th>
 <div class="container" id="view_ord">
 <div class="row">
 
@@ -79,11 +85,16 @@
             {% for i in data %}
             <input type="number" value="{{i.id}}"  name="product_id" class="dddd">
             {% endfor %}
-            </form>
+        </form>
+        <div><form action="{% url 'remove_add'%}" method="get">
+            <input type="number" value="{{i.id}}"  name="add_id" class="dddd">
+                <input type="submit" value="Update" class="btn btn-danger"/>
+              </form>
+            </div>
         </div>
     </div>
     {% endfor %}
-    <div class="col-10" ><button class="btn btn-warning mt-5" id="pay_next" onclick="go_pay()">Next</button></div>
+    <div class="col-10" ><button class="btn btn-warning mt-5" type="submit"  id="pay_next" onclick="go_pay()">Next</button></div>
     {% else %}
     <table class="table">
         <form action="" method="post">
@@ -106,7 +117,7 @@
         <tr><th colspan="2">
             {% csrf_token %}
             {% for i in data %}
-            <input type="number" value="{{i.id}}"  name="product_id" id="dddd">
+            <input type="number" value="{{i.id}}"  name="product_id" class="dddd">
             {% endfor %}
             <input type="submit" value="Submit" class="btn btn-success">
         </th></tr>
@@ -125,17 +136,30 @@
 </div>
 </div>
 <div class="col-lg-2 border-start mt-4">
-<button class="btn btn-warning"><a class="nav-link" aria-current="page" href="/cart">Go Back to Cart</a></button>
+    <form action="{% url 'g_back' %}" method="get">
+<button class="btn btn-warning" type="submit" >Go Back to Cart</button>
+</form>
 <h4>Order Summery</h4>
+<h5>Total Items: {{q}}</h5>
+<h5>Total Amount: {{t_amt}} &#x20b9</h5>
 </div>
 </div>
-
+<div id="none" >
+    <h4>Order Summery</h4>
+    <h5>Total Items: {{q}}</h5>
+    <h5>Total Amount: {{t_amt}} &#x20b9</h5>
+    <h5>Thankyou for shopping with us</h5>
+<form action="{% url 'success' %}" method="get">
+    <!-- <input type="submit" id="" class="btn btn-warning" value ="check"> -->
+    <input type="submit" id="" class="btn btn-warning" value ="Return to Cart">
+</form>
+</div>
     {% endblock %}
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
         var options = {
     "key": "rzp_test_r1SMDlPAi7bpbD", // Enter the Key ID generated from the Dashboard
-    "amount": "50000", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "amount": "{{t_amt}}00", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
     "currency": "INR",
     "name": "Acme Corp",
     "description": "Test Transaction",
@@ -145,6 +169,10 @@
         alert(response.razorpay_payment_id);
         alert(response.razorpay_order_id);
         alert(response.razorpay_signature)
+        document.getElementById('none').style.display="block"
+        document.getElementById('pay').style.display="none"
+        
+
     },
     "prefill": {
         "name": "Gaurav Kumar",
@@ -172,7 +200,6 @@ document.getElementById('rzp-button1').onclick = function(e){
     rzp1.open();
     e.preventDefault();
 }
-
 
         function next_add(){
             let a = document.getElementById("view_ord")
