@@ -23,5 +23,4 @@ urlpatterns = [
     path('g_back/', views.go_back, name='g_back'),
     path('r_add/', views.remove_add, name='remove_add'),
     path('del_pla/', views.Delivary_placed, name='del_pla'),
-    path('confirm/',views.confirm,name='confirm')
 ]

@@ -142,7 +142,7 @@ body{
     <a href="#main">
     <div class="img_cont carousel slide" href="">
     
-<div class="show col-12 fad">
+<div class="show12 col-12 fad">
   <div class="img_slide">
 {% for i in c_img %}
 <img src="{{i.image.url}}" width="100%" style="max-width: 300px;" class="card-img-top mt-2 px-5 col-lg-3">
@@ -150,7 +150,7 @@ body{
 </div>
 <div class="cp" style="color: white;"> View our Latest Comics</div>
 </div>
-<div class="show col-12 fad">
+<div class="show12 col-12 fad">
   <div class="img_slide">
   {% for i in j_img %}
       <img src="{{i.image.url}}" width="100%" style="max-width: 300px;" class="card-img-top mt-2 px-5">
@@ -158,7 +158,7 @@ body{
     </div>
     <div class="cp" style="color: white;"> <b>View our Latest Journals</b></div>
   </div>
-  <div class="show col-12 fad">
+  <div class="show12 col-12 fad">
     <div class="img_slide">
     {% for i in n_img %}
     <img src="{{i.image.url}}" width="100%" style="max-width: 300px;" class="card-img-top mt-2 px-5">
@@ -211,7 +211,7 @@ body{
 
       function showSlides(){
         let i;
-        let slide = document.getElementsByClassName("show");
+        let slide = document.getElementsByClassName("show12");
         for (i=0; i<slide.length; i++){
           slide[i].style.display="none"
         }

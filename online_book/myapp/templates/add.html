@@ -25,10 +25,25 @@
         }
         #none{
             display: none;
+            position: absolute;
+            right: 0px;
+            top:0px;
+            bottom: 0px;
+            left: 0px;
+            background-color: aqua; 
         }
-        #pay{
-            display: block;
+        .ord_done{
+            margin-top: 30px;
+           margin: auto;
+           padding: 10px;
+           max-width: 40%; 
         }
+        #nav_it{
+            margin-top: 0%;
+            margin-left: 0%;
+        }
+       
+    
     </style>
 </head>
 <body>
@@ -40,9 +55,10 @@
           </button>
       </nav>
     {% block content %}
+    <div class="container">
 <div class="row" id="pay">
 <div class="col-lg-10">
-<div class="row border mt-4 done "><th><h3>View Order</h3> </th>
+<div class="border mt-4"><th><h3>View Order</h3> </th>
 <div class="container" id="view_ord">
 <div class="row">
 
@@ -67,14 +83,13 @@
 </div>
 </div>
 </div>
-<div class="row border mt-4" ><th><h3>Address</h3> </th>
+<div class="border mt-4" ><th><h3>Address</h3> </th>
     <div class="container" id="hide1">
         <div class="col-10" ><button class="btn btn-warning" onclick="go_ord()" >Go Back</button></div>
     {% if user_add %}
 
     {% for i in user_add %}
     <div class="card mb-3" style="width: 18rem;">
-        <input type="radio" style="float: left; clear: both;">
         <div class="card-body">
           <h5 class="card-title">{{i.street}}</h5>
           <h5 class="card-title">{{i.City}}</h5>
@@ -126,7 +141,7 @@
     {% endif %}
 </div>
 </div>
-<div class="row border mt-4"><th><h3>Payment</h3></th>
+<div class="border mt-4"><th><h3>Payment</h3></th>
     <div class="mt-2">
     <form action="{% url 'success' %}" method="get">
         <!-- <input type="submit" id="" class="btn btn-warning" value ="check"> -->
@@ -144,20 +159,32 @@
 <h5>Total Amount: {{t_amt}} &#x20b9</h5>
 </div>
 </div>
-<div id="none" >
-    <h4>Order Summery</h4>
-    <h5>Total Items: {{q}}</h5>
-    <h5>Total Amount: {{t_amt}} &#x20b9</h5>
-    <h5>Thankyou for shopping with us</h5>
-<form action="{% url 'success' %}" method="get">
-    <!-- <input type="submit" id="" class="btn btn-warning" value ="check"> -->
-    <input type="submit" id="" class="btn btn-warning" value ="Return to Cart">
-</form>
+
+<div id="none" class="row">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow" id="nav_it">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#"><img src="{% static 'images\logo.png' %}" class="img-thumbnail rounded-circle" alt="..." width="60" height="60"></a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+      </nav>
+    <div class="ord_done border">
+        <div>
+            <h1>Thankyou for shopping with us</h1>
+            <h4>Order Summery</h4>
+            <h5>Total Items: {{q}}</h5>
+            <h5>Total Amount: {{t_amt}} &#x20b9</h5>
+            <form action="{% url 'success' %}" method="get">
+                <input type="submit" id="" class="btn btn-warning" value ="Review your Order">
+            </form>
+        </div>
+    </div>
+</div>
 </div>
     {% endblock %}
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
-        var options = {
+       var options = {
     "key": "rzp_test_r1SMDlPAi7bpbD", // Enter the Key ID generated from the Dashboard
     "amount": "{{t_amt}}00", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
     "currency": "INR",
@@ -199,7 +226,7 @@ rzp1.on('payment.failed', function (response){
 document.getElementById('rzp-button1').onclick = function(e){
     rzp1.open();
     e.preventDefault();
-}
+} 
 
         function next_add(){
             let a = document.getElementById("view_ord")

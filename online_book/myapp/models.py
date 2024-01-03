@@ -51,6 +51,8 @@ class Delivered(models.Model):
     order_id_no = models.CharField(max_length = 100, null=True, unique=True)
     date_ord = models.DateField(auto_now_add=True, null=True)
     date = models.DateField(null=True)
-    quantity = models.PositiveIntegerField(null=True)
+    quantity = models.PositiveIntegerField(default=1, null=True)
+    address = models.ForeignKey(Address, on_delete=models.CASCADE, null=True)
+    Cur_add = models.CharField(max_length=900, null=True)
 
 

@@ -9,13 +9,12 @@ import datetime
 
 
 
+
 def find(request):
     if request.method == "POST":
         search = request.POST.get('search')
-        all = book.objects.all()
-        os = book.objects.filter(Q(Name__icontains = search) | Q(Author__icontains=search) | Q(Publisher__icontains=search) | Q(category__icontains=search))
+        os = book.objects.filter(Q(Name__icontains = search) | Q(Author__icontains=search) | Q(Publisher__icontains=search) | Q(category__icontains=search) | Q(Genra__icontains=search))
         
-
     else:
         os = book.objects.all()
     return render(request, 'index.html', {'data':os})
@@ -65,7 +64,7 @@ def Cart_search(request):
 
         if request.method == "POST":
             search = request.POST.get('search')
-            a = book.objects.filter(Q(Name__icontains = search) | Q(Author__icontains=search) | Q(Publisher__icontains=search) | Q(category__icontains=search))
+            a = book.objects.filter(Q(Name__icontains = search) | Q(Author__icontains=search) | Q(Publisher__icontains=search) | Q(category__icontains=search) | Q(Genra__icontains=search))
      
         else:
             a = book.objects.all()
@@ -214,7 +213,7 @@ def address_user(request):
         total = 0
         for i in range(0, len(a)):
             total = total + a[i]
-        print(total)
+        
         
         if request.method == "POST":
             street=request.POST.get('street')
@@ -240,7 +239,9 @@ def remove_add(request):
     if request.user.is_authenticated:
         if request.method == "GET":
             ct = request.GET.get('add_id')
-            os = Address.objects.filter(id__in = ct)
+            print(ct)
+            os = Address.objects.filter(user_id=request.user)
+            print(os)
             os.delete()
             return HttpResponseRedirect('/address/')
 
@@ -249,19 +250,46 @@ def Delivary(request):
         if request.method == "GET":
             order = Order.objects.filter(user=request.user).values_list('Buy_direct_id', flat=True)
             data = book.objects.filter(id__in=order).values_list('id', flat=True)
+            print(data)
             ord_no = Order.objects.filter(user=request.user).values_list('order_id', flat=True)
-            qu = Cart.objects.filter(user=request.user).values_list('quantity', flat=True)
-            c = Order.objects.filter(user=request.user).values_list('id', flat=True)
+            qu = Order.objects.filter(user=request.user).values_list('quantity', flat=True)
+            c_ord  = Order.objects.filter(user=request.user).values_list('id', flat=True)
+            print(c_ord)
 
-            
-            
+
+            order_cart = Order.objects.filter(user=request.user).values_list('Buy_cart_id', flat=True)
+            cart_1 = Cart.objects.filter(id__in=order_cart).values_list('id', flat=True)
+            c = []
+            for i in cart_1:
+                c.append(i)
+        
+
+            street=Address.objects.filter(user=request.user).values_list('street', flat=True)
+            city=Address.objects.filter(user=request.user).values_list('City', flat=True)
+            pincode=Address.objects.filter(user=request.user).values_list('Pincode', flat=True)
+            state=Address.objects.filter(user=request.user).values_list('State', flat=True)
+
+            crnt =[]
+            crnt.extend(street)
+            crnt.extend(city)
+            crnt.extend(pincode)
+            crnt.extend(state)
+            crnt_add=str(crnt[0])
+            for i in crnt[1:]:
+                crnt_add += ", " + str(i)
+
+         
             for i in range(0, len(data)):
                 d = datetime.datetime.now() + datetime.timedelta(days=5)
-                Delivered.objects.create(book_Cart_id=data[i] ,user=request.user, order_id_no=ord_no[i], quantity= qu[i], date=d)
+                Delivered.objects.create(book_Cart_id=data[i] ,user=request.user, order_id_no=ord_no[i], quantity= qu[i], date=d, Cur_add=crnt_add)
                 
-                if ord_no[i] in ord_no:
-                    pi = Order.objects.filter(id__in = c)
-                    pi.delete()
+                
+            pi = Order.objects.filter(id__in = c_ord)
+            pi.delete()
+
+            p = Cart.objects.filter(id__in=c)        
+            p.delete()
+            
         return HttpResponseRedirect('/del_pla/')
     
 def cart_del(request):
@@ -277,12 +305,14 @@ def Delivary_placed(request):
         d= Delivered.objects.filter(user=request.user).values_list('book_Cart_id', flat=True)
         data=book.objects.filter(id__in=d)
         
-        k = Delivered.objects.filter(user=request.user)
+        k = Delivered.objects.filter(user=request.user).order_by('-id')
 
         uname = request.user
 
         cart1 = Cart.objects.filter(user=request.user)
         count = cart1.count()
+
+        address = Delivered.objects.filter(user=request.user).values_list('Cur_add' , flat=True)
 
         amount = book.objects.filter(id__in = d).values_list('Price', flat=True)
         num_books = Delivered.objects.filter(user=request.user).values_list('quantity', flat = True)
@@ -291,7 +321,5 @@ def Delivary_placed(request):
         for i in range (0, len(amount)):
             mul_amt_book.append(amount[i]*num_books[i])
         
-        return render(request, "delivered.html", {'data':data, 'deli':k, 'uname':uname, 'amt':mul_amt_book, 'cartcount':count})
+        return render(request, "delivered.html", {'data':data, 'deli':k, 'uname':uname, 'amt':mul_amt_book, 'cartcount':count, 'ADD':address})
 
-def confirm(request):
-    return render(request,'confirm.html')
